@@ -209,6 +209,19 @@ void Refrigerator::insertFoodFromFile()
          * ========== TODO: Implement this part ==========
          * ===============================================
          */
+        
+        // add by seonghun
+        string foodname;
+        int width, height;
+        int number;
+        int exp;
+
+        // 테스트 할 겸 맨 첫줄만 입력받음 // 실제로는 txt 파일에 있는 모든 값들을 입력받아야 함
+        ff >> foodname >> width >> height >> number >>  exp;
+        auto pair = make_pair(width,height);
+        for(auto i = 1 ; i <= number ; i++){
+            controller->stackFood(foodname, pair, exp);
+        }
     }
     ff.close();
 }
