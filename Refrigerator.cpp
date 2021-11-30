@@ -222,6 +222,7 @@ void Refrigerator::insertFoodFromFile()
         for(auto i = 1 ; i <= number ; i++){
             controller->stackFood(foodname, pair, exp);
         }
+        // add by seonghun
     }
     ff.close();
 }
@@ -237,6 +238,14 @@ void Refrigerator::popFood()
      * ======== TODO: Implement this function ========
      * ===============================================
      */
+    // add by seonghun
+    string foodname;
+    cout << "Which food do you want to pop? : ";
+    // 입력 받은 foodname을 Controller의 popFood()에 전달
+    cin >> foodname;
+    controller -> popFood(foodname);
+
+    // add by seonghun
 }
 
 

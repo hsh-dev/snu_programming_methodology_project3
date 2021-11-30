@@ -1,7 +1,6 @@
 #include "Controller.h"
 #include "Food.h"
 
-// 커밋되는지 테스트//
 /**
  * A constructor of the Controller class
  * 
