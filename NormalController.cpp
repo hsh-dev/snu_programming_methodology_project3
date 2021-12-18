@@ -32,7 +32,7 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
     // "x" and "y" is position in refrigerator
     // "level" is index of shelf // level = 0 means first floor
     // "space" is initialize with 0 and if there is food, it is filled with 1
-    vector<vector<int>> space_shelf;
+    vector<vector<int>> shelf_space;
     for(auto it : shelves){
         vector<int> space(30);  // space for each shelf
         auto list = it.vec;
@@ -43,7 +43,7 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
                 space[idx] = 1;
             }
         }
-        space_shelf.push_back(space);
+        shelf_space.push_back(space);
     }
     vector<int> shelf_height;   // save height of each shelf
     for(auto it : shelves){
@@ -51,8 +51,8 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
     }
 
     bool stack_or_not = false; // when stack_or_not became true, it means that it can stack somewhere
-    for(auto k = 0 ; k < space_shelf.size() ; k++){
-        auto space_list = space_shelf[k];
+    for(auto k = 0 ; k < shelf_space.size() ; k++){
+        auto space_list = shelf_space[k];
         for(auto i = 0 ; i < space_list.size() ; i++){
             bool possible_or_not = true;
             if(space_list[i] == 0){
@@ -63,7 +63,7 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
                 }
                 if (possible_or_not){
                     // if location is not on the top
-                    if(k != space_shelf.size()-1){
+                    if(k != shelf_space.size()-1){
                         if(shelf_height[k] + foodSize.second <= shelf_height[k+1]){
                             stack_or_not = true;
                             x = i;
@@ -90,6 +90,7 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
     }
     // case if food can not be stacked in existing shelf
     // make new shelf if it is possible
+    FoodPtr stack_food;
     if(!stack_or_not){
         int h = shelves.back().height;
         // in normal controller, maxHeight is added to new shelf 
@@ -98,7 +99,7 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
             x = 0;
             y = h;
             Shelf new_shelf(h);
-            FoodPtr stack_food = new FoodInFridge(Food(name, foodSize, exp), x, y);
+            stack_food = new FoodInFridge(Food(name, foodSize, exp), x, y);
             new_shelf.vec.push_back(stack_food);
             shelves.push_back(new_shelf);
             cout << "Inserting " << name << " into x: " << x << ", y: " << y << endl;
@@ -108,7 +109,7 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
         }
     }
     else{
-        FoodPtr stack_food = new FoodInFridge(Food(name, foodSize, exp), x, y);
+        stack_food = new FoodInFridge(Food(name, foodSize, exp), x, y);
         shelves[level].vec.push_back(stack_food);
         cout << "Inserting " << name << " into x: " << x << ", y: " << y << endl;
     }
@@ -168,12 +169,10 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
         // update value of foodList[name]
         auto food_vec = foodList[name];
         // x, y is position in refrigerator
-        FoodPtr stack_food = new FoodInFridge(Food(name,foodSize,exp),x,y);
         food_vec.push_back(stack_food);
         foodList[name] = food_vec;
     }
     else{
-        FoodPtr stack_food = new FoodInFridge(Food(name,foodSize,exp),x,y);
         vector<FoodPtr> food_vec;
         food_vec.push_back(stack_food);
         foodList.insert({name,food_vec});
@@ -200,7 +199,7 @@ bool NormalController::popFood(const string food_name)
         // if there is no food_name in foodList, return false
         return false;
     }
-    auto pop_food = findMinExpFood(food_name);
+    auto pop_food = minExp_from_right(food_name);
     auto food_ptr = *pop_food;
     auto pop_exp = food_ptr->getExp();
     auto pop_size = food_ptr->getSize();

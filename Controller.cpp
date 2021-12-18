@@ -34,6 +34,26 @@ vector<FoodPtr>::iterator Controller::findMinExpFood(const string food_name)
     return min_element(v.begin(), v.end(), comp);
 }
 
+vector<FoodPtr>::iterator Controller::minExp_from_right(const string food_name){
+    vector<FoodPtr> &v = foodList[food_name];
+
+    auto exp_date = v.front()->getExp();
+    auto position = v.front()->getPos();
+    vector<FoodPtr>::iterator min_exp_food;
+
+    for(auto it = v.begin() ; it < v.end() ; it++){
+        if((*it)->getExp() <= exp_date){
+            if((*it)->getPos().second >= position.second){
+                if((*it)->getPos().first > position.first){
+                    min_exp_food = it;
+                }
+            }
+        } 
+    }
+
+    return min_exp_food;
+}
+
 /**
  * Set element of storageGrid in the given range to true
  *

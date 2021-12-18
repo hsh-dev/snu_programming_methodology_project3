@@ -30,6 +30,7 @@ protected:
     foodListType &foodList;
 
     vector<FoodPtr>::iterator findMinExpFood(const string);
+    vector<FoodPtr>::iterator minExp_from_right(const string);  // newly added
     
 private:
     bool **storageGrid;
