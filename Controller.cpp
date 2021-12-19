@@ -37,16 +37,21 @@ vector<FoodPtr>::iterator Controller::findMinExpFood(const string food_name)
 vector<FoodPtr>::iterator Controller::minExp_from_right(const string food_name){
     vector<FoodPtr> &v = foodList[food_name];
 
-    auto exp_date = v.front()->getExp();
-    auto position = v.front()->getPos();
-    vector<FoodPtr>::iterator min_exp_food;
+
+    vector<FoodPtr>::iterator min_exp_food = v.begin();
 
     for(auto it = v.begin() ; it < v.end() ; it++){
-        if((*it)->getExp() <= exp_date){
-            if((*it)->getPos().second >= position.second){
-                if((*it)->getPos().first > position.first){
+        if((*it)->getExp() < (*min_exp_food)->getExp()){
+            min_exp_food = it;
+        }
+        else if((*it)->getExp() == (*min_exp_food)->getExp()){
+            if((*it)->getPos().second == (*min_exp_food)->getPos().second){
+                if((*it)->getPos().first > (*min_exp_food)->getPos().first){
                     min_exp_food = it;
                 }
+            }
+            else if((*it)->getPos().second > (*min_exp_food)->getPos().second){
+                min_exp_food = it;
             }
         } 
     }

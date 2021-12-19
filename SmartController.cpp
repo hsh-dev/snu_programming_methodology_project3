@@ -204,6 +204,11 @@ bool SmartController::popFood(const string food_name) // void
                 erase_or_not = true;
                 deleted_level = level;
 
+                for(int j = i ; j < shelves[level].vec.size() ; j++){
+                    auto temp_pos = shelves[level].vec[j] -> getPos();
+                    intPair new_pos = make_pair(temp_pos.first-pop_size.first,temp_pos.second);
+                    shelves[level].vec[j] -> setPos(new_pos);
+                }
                 break;
             }
         }
@@ -242,21 +247,27 @@ bool SmartController::popFood(const string food_name) // void
         if(maxHeight(shelves[deleted_level]) != shelves[deleted_level+1].height-shelves[deleted_level].height){
             need_update = true;
             gap = shelves[deleted_level + 1].height - shelves[deleted_level].height - maxHeight(shelves[deleted_level]);
+            shelves[deleted_level+1].height = shelves[deleted_level+1].height - gap;
         }
     }
     // else, no reason to update height
 
     // height update when there is gap
-    for(auto i = deleted_level+1 ; i < shelves.size() ; i++){
-        for (auto j = 0; j < shelves[i].vec.size(); j++)
-        {
-            auto temp_pos = shelves[i].vec[j]->getPos();
-            intPair new_pos = make_pair(temp_pos.first,temp_pos.second-gap);
-            shelves[i].vec[j]->setPos(new_pos);
+    if(need_update){
+        for(auto i = deleted_level+1 ; i < shelves.size() ; i++){
+            for (auto j = 0; j < shelves[i].vec.size(); j++)
+            {
+                auto temp_pos = shelves[i].vec[j]->getPos();
+                intPair new_pos = make_pair(temp_pos.first,temp_pos.second-gap);
+                shelves[i].vec[j]->setPos(new_pos);
+            }
         }
     }
 
-    // TODO // need to push left // case when there is no food on shelf
+    // case when shelf is empty
+    if(shelves[deleted_level].vec.empty()){
+        shelves.erase(shelves.begin()+deleted_level);
+    }
 
     return true;
 }

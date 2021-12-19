@@ -114,55 +114,6 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
         cout << "Inserting " << name << " into x: " << x << ", y: " << y << endl;
     }
 
-    // if(!shelves.empty()){
-    //     auto upper_shelf = shelves.back();
-    //     auto list_on_shelf = upper_shelf.vec;
-    //     auto last_food_on_shelf = list_on_shelf.back();
-    //     auto position = last_food_on_shelf->getPos();
-    //     auto size = last_food_on_shelf->getSize();
-    //     // position for new Food
-    //     x = position.first + size.first;
-    //     y = position.second;
-    // }
-    // else{
-    //     // if shelf is empty, push 1st shelf
-    //     Shelf first_shelf(0);
-    //     shelves.push_back(first_shelf);
-    //     x = 0;
-    //     y = 0;
-    // }
-
-    // if(y + foodSize.second > 20){
-    //     // this case stacking food is impossible
-    //     return false;
-    // }
-
-    // if(x + foodSize.first > 30){
-    //     int height = y + maxHeight;
-    //     if(height <= 19){
-    //         x = 0;
-    //         y = height;
-    //         if(y + foodSize.second > 20){
-    //             return false;
-    //         }
-    //         else{
-    //             Shelf new_shelf(height);
-    //             FoodPtr stack_food = new FoodInFridge(Food(name, foodSize, exp), x, y);
-    //             new_shelf.vec.push_back(stack_food);
-    //             shelves.push_back(new_shelf);
-    //             cout << "Inserting " << name << " into x: " << x << ", y: " << y << endl; 
-    //         }
-    //     }
-    //     else{
-    //         return false;
-    //     }
-    // }
-    // else{
-    //     FoodPtr stack_food = new FoodInFridge(Food(name, foodSize, exp), x, y);
-    //     shelves.back().vec.push_back(stack_food);
-    //     cout << "Inserting " << name << " into x: " << x << ", y: " << y << endl;
-    // }
-
     // stack FoodInFridge object in "FoodList"
     // if food is exist in foodList
     if(foodList.find(name) != foodList.end()){
