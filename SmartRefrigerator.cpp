@@ -134,7 +134,7 @@ void SmartRefrigerator::recommendMealCourses() {
                     bool check = true;
                     for (auto m : ingredients) {
                         if (m.first == l.first) {
-                            check == false;
+                            check = false;
                             m.second += l.second;
                         }
                     }
@@ -146,7 +146,7 @@ void SmartRefrigerator::recommendMealCourses() {
                     bool check = true;
                     for (auto m : ingredients) {
                         if (m.first == l.first) {
-                            check == false;
+                            check = false;
                             m.second += l.second;
                         }
                     }

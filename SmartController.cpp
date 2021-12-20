@@ -98,7 +98,7 @@ bool SmartController::stackFood(const string name, intPair foodSize, int exp)
                     }
                     else
                     { // if location is on the top
-                        if (shelf_height[k] + foodSize.second <= 30)
+                        if (shelf_height[k] + foodSize.second <= 20)
                         {
                             stack_or_not = true;
                             x = i;
@@ -196,10 +196,8 @@ bool SmartController::popFood(const string food_name) // void
         auto food_list = shelves[level].vec;
         for (int i = food_list.size() - 1; i >= 0; i--)
         {
-            if (pop_exp == food_list[i]->getExp() && pop_size == food_list[i]->getSize())
+            if (pos.first == food_list[i]->getPos().first && pos.second == food_list[i]->getPos().second)
             {
-                auto food = food_list[i];
-                pos = food->getPos();
                 shelves[level].vec.erase(shelves[level].vec.begin() + i);
                 erase_or_not = true;
                 deleted_level = level;

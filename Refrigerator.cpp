@@ -236,14 +236,11 @@ void Refrigerator::popFood()
      * ======== TODO: Implement this function ========
      * ===============================================
      */
-    // add by seonghun
     string foodname;
     cout << "Which food do you want to pop? : ";
-    // 입력 받은 foodname을 Controller의 popFood()에 전달
+    // input foodname to Controller popFood()
     cin >> foodname;
     controller -> popFood(foodname);
-
-    // add by seonghun
 }
 
 
