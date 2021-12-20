@@ -184,6 +184,7 @@ void Refrigerator::insertFoodDirectly()
      * ========== TODO: Implement this part ==========
      * ===============================================
      */
+    controller->stackFood(foodName, foodSize, expDate);
 }
 
 /**
@@ -209,20 +210,17 @@ void Refrigerator::insertFoodFromFile()
          * ========== TODO: Implement this part ==========
          * ===============================================
          */
-        
-        // add by seonghun
-        string foodname;
-        int width, height;
+        string foodName;
+        intPair foodSize;
         int number;
-        int exp;
+        int expDate;
 
-        // 테스트 할 겸 맨 첫줄만 입력받음 // 실제로는 txt 파일에 있는 모든 값들을 입력받아야 함
-        ff >> foodname >> width >> height >> number >>  exp;
-        auto pair = make_pair(width,height);
-        for(auto i = 1 ; i <= number ; i++){
-            controller->stackFood(foodname, pair, exp);
+        while (ff >> foodName) {
+            ff >> foodSize.first >> foodSize.second >> number >> expDate;
+            for(auto i = 0; i < number; i++){
+                controller->stackFood(foodName, foodSize, expDate);
+            }
         }
-        // add by seonghun
     }
     ff.close();
 }

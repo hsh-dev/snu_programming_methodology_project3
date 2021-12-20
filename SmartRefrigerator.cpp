@@ -39,6 +39,25 @@ void SmartRefrigerator::addRecipeFromFile()
      * ======== TODO: Implement this function ========
      * ===============================================
      */
+    string recipeName;
+    strIntPair ingredient;
+    vector<strIntPair> ingredients;
+    double recipeScore;
+
+    Recipe newRecipe;
+
+    while(recipe_list >> recipeName) {
+        recipe_list >> ingredient.first;
+        while(ingredient.first != "/") {
+            recipe_list >> ingredient.second;
+            ingredients.push_back(ingredient);
+            recipe_list >> ingredient.first;
+        }
+        recipe_list >> recipeScore;
+
+        recipes.push_back(Recipe(recipeName, ingredients, recipeScore));
+        ingredients.clear();
+    }
 
     recipe_list.close();
 }
@@ -84,6 +103,145 @@ void SmartRefrigerator::recommendMealCourses() {
    * ======== TODO: Implement this function ========
    * ===============================================
    */
+    typedef vector<string> Meal3;
+    typedef pair<Meal3, pair<double, double>> Course; 
+    vector<Course> courses;
+    vector<Course> best;
+    
+
+    for (auto i = recipes.begin(); i != recipes.end(); ++i) {
+        for (auto j = i + 1; j != recipes.end(); ++j) {
+            for (auto k = j + 1; k != recipes.end(); ++k) {
+
+                map<string, map<int, int>> usable_meal;
+                Meal3 newMeal;
+
+                for (foodListType::iterator iter = foodList.begin(); iter != foodList.end(); ++iter)
+                {
+                    map<int, int> foodCounter;
+                    for (int l = 0; l < (iter->second).size(); l++)
+                    {
+                        int exp = (iter->second)[l]->getExp();
+                        foodCounter[exp]++;
+                    }
+
+                    usable_meal.insert(make_pair(iter->first, foodCounter));
+                }
+                
+                vector<strIntPair> ingredients = i->getIngredients();
+                vector<strIntPair> temp = j->getIngredients();
+                for (auto l : temp) {
+                    bool check = true;
+                    for (auto m : ingredients) {
+                        if (m.first == l.first) {
+                            check == false;
+                            m.second += l.second;
+                        }
+                    }
+                    if (check)
+                        ingredients.push_back(l);
+                }
+                temp = k->getIngredients();
+                for (auto l : temp) {
+                    bool check = true;
+                    for (auto m : ingredients) {
+                        if (m.first == l.first) {
+                            check == false;
+                            m.second += l.second;
+                        }
+                    }
+                    if (check)
+                        ingredients.push_back(l);
+                }
+                
+                bool check_can_make = true;
+                for (auto l : ingredients) {
+                    map<string, map<int, int>>::iterator iter = usable_meal.find(l.first);
+                    if (iter == usable_meal.end()) {
+                        check_can_make = false;
+                        break;
+                    }
+
+                    for (map<int, int>::iterator m = iter->second.begin(); m != iter->second.end(); ++m) {
+                        if (l.second > m->second) {
+                            l.second -= m->second;
+                            m->second = 0;
+                        }
+                        else {
+                            m->second -= l.second;
+                            l.second = 0;
+                        }
+                    }
+                    if (l.second != 0) {
+                        check_can_make = false;
+                        break;
+                    }
+                }
+
+                if (check_can_make) {
+                    newMeal.push_back(i->getName());
+                    newMeal.push_back(j->getName());
+                    newMeal.push_back(k->getName());
+
+                    double Satisfaction = 0;
+                    double Expiration = 0;
+                    Satisfaction += i->getScore();
+                    Satisfaction += j->getScore();
+                    Satisfaction += k->getScore();
+                    for(auto l : usable_meal) {
+                        for(auto m : l.second) {
+                            Expiration += m.second * m.first;
+                        }
+                    }
+                    
+                    courses.push_back(make_pair(newMeal, make_pair(Satisfaction, Expiration)));
+                }
+            }
+        }
+    }
+
+    double Satisfaction_MAX = 0;
+    double Expiration_MAX = 0;
+    
+    for (auto i : courses) {
+        if (Satisfaction_MAX < i.second.first)
+            Satisfaction_MAX = i.second.first;
+        if (Expiration_MAX < i.second.second)
+            Expiration_MAX = i.second.second;
+    }
+
+    for (auto j=0; j<3; j++) {
+        double MAX_score = 0;
+        vector<Course>::iterator temp_iter = courses.end();
+        for (auto i = courses.begin(); i != courses.end(); ++i) {
+            double temp1 = i->second.first / Satisfaction_MAX;
+            double temp2 = i->second.second / Expiration_MAX;
+            if (MAX_score < temp1 + temp2) {
+                MAX_score = temp1 + temp2;
+                temp_iter = i;
+            }
+        }
+        if (temp_iter == courses.end()) {
+            break;
+        }
+        else {
+            best.push_back(make_pair(temp_iter->first, temp_iter->second));
+            courses.erase(temp_iter);
+        }
+    }
+
+    if (best.empty()) {
+        cout << "There are no possible course meal." << endl;
+    }
+    else {
+        for (auto i : best) {
+            double temp1 = i.second.first / Satisfaction_MAX;
+            double temp2 = i.second.second / Expiration_MAX;
+            cout << "1. " << i.first.at(0) << " 2. " << i.first.at(1) << " 3. " << i.first.at(2)
+            << " / total score sum : " << temp1 + temp2
+            << " (" << temp1 << " / " << temp2 << ")" << endl;
+        }
+    }
 }
 
 /**

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <algorithm> //junhui added (using min_element)
 
 typedef FoodInFridge *FoodPtr;
 typedef map<string, vector<FoodPtr>> foodListType;
