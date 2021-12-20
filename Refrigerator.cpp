@@ -178,12 +178,7 @@ void Refrigerator::insertFoodDirectly()
     cin >> foodSize.first >> foodSize.second;
     cout << "Days left to expiration date : ";
     cin >> expDate;
-
-    /**
-     * ===============================================
-     * ========== TODO: Implement this part ==========
-     * ===============================================
-     */
+    // TODO
     controller->stackFood(foodName, foodSize, expDate);
 }
 
@@ -205,16 +200,13 @@ void Refrigerator::insertFoodFromFile()
     }
     else
     {
-        /**
-         * ===============================================
-         * ========== TODO: Implement this part ==========
-         * ===============================================
-         */
+        // TODO
+        // variable declaration
         string foodName;
         intPair foodSize;
         int number;
         int expDate;
-
+        // read file 
         while (ff >> foodName) {
             ff >> foodSize.first >> foodSize.second >> number >> expDate;
             for(auto i = 0; i < number; i++){
@@ -231,11 +223,7 @@ void Refrigerator::insertFoodFromFile()
  */
 void Refrigerator::popFood()
 {
-    /**
-     * ===============================================
-     * ======== TODO: Implement this function ========
-     * ===============================================
-     */
+    // TODO
     string foodname;
     cout << "Which food do you want to pop? : ";
     // input foodname to Controller popFood()

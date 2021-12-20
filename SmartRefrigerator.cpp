@@ -34,21 +34,18 @@ void SmartRefrigerator::addRecipeFromFile()
         cout << "There is no recipe file!" << endl;
         return;
     }
-    /**
-     * ===============================================
-     * ======== TODO: Implement this function ========
-     * ===============================================
-     */
+
+    // TODO
+    // variable declaration
     string recipeName;
     strIntPair ingredient;
     vector<strIntPair> ingredients;
     double recipeScore;
-
     Recipe newRecipe;
-
+    // read file
     while(recipe_list >> recipeName) {
         recipe_list >> ingredient.first;
-        while(ingredient.first != "/") {
+        while(ingredient.first != "/") { // before '/', push_back(strIntPair) repeatably
             recipe_list >> ingredient.second;
             ingredients.push_back(ingredient);
             recipe_list >> ingredient.first;
@@ -98,70 +95,79 @@ void SmartRefrigerator::showRecipe()
  * from a possible combination
  */
 void SmartRefrigerator::recommendMealCourses() {
-  /**
-   * ===============================================
-   * ======== TODO: Implement this function ========
-   * ===============================================
-   */
-    typedef vector<string> Meal3;
-    typedef pair<Meal3, pair<double, double>> Course; 
-    vector<Course> courses;
-    vector<Course> best;
-    
 
+    // TODO
+    // 1) make posible combination (in triple for loop)
+    // * 1-1) store usable ingredients -> usable_meal
+    // * 1-2) ingredients need -> ingredients
+    // * 1-3) compare 1-1) with 1-2), and check possible
+    // 2) sum of score
+    // 3) normalize and find greatest
+
+    // variable setting
+    typedef vector<string> Meal3; // just name of three meals
+    typedef pair<Meal3, pair<double, double>> Course; // three meals and two score
+    vector<Course> courses; // every possible courses
+    vector<Course> best; // store best3 courses
+    
+    // 1) make posible combination (in triple for loop)
     for (auto i = recipes.begin(); i != recipes.end(); ++i) {
         for (auto j = i + 1; j != recipes.end(); ++j) {
             for (auto k = j + 1; k != recipes.end(); ++k) {
-
-                map<string, map<int, int>> usable_meal;
+                // 1-1) store usable ingredients -> usable_meal
+                map<string, map<int, int>> usable_meal; // map<name, map<exp, number>>
                 Meal3 newMeal;
-
-                for (foodListType::iterator iter = foodList.begin(); iter != foodList.end(); ++iter)
-                {
+                // same algorithm as display()
+                // use exp as key of map
+                for (foodListType::iterator iter = foodList.begin(); iter != foodList.end(); ++iter) {
                     map<int, int> foodCounter;
-                    for (int l = 0; l < (iter->second).size(); l++)
-                    {
+                    for (int l = 0; l < (iter->second).size(); l++) {
                         int exp = (iter->second)[l]->getExp();
                         foodCounter[exp]++;
                     }
-
                     usable_meal.insert(make_pair(iter->first, foodCounter));
                 }
                 
+                // 1-2) ingredients need -> ingredients
+                // Combine ingredients for 3 meals
                 vector<strIntPair> ingredients = i->getIngredients();
                 vector<strIntPair> temp = j->getIngredients();
-                for (auto l : temp) {
+                for (auto l = temp.begin(); l != temp.end(); ++l) {
                     bool check = true;
-                    for (auto m : ingredients) {
-                        if (m.first == l.first) {
+                    for (auto m = ingredients.begin(); m != ingredients.end(); ++m) {
+                        if (m->first == l->first) { // if find same ingredient -> just count number
                             check = false;
-                            m.second += l.second;
+                            m->second += l->second;
                         }
                     }
                     if (check)
-                        ingredients.push_back(l);
+                        ingredients.push_back(make_pair(l->first, l->second)); // if find new ingredient -> push_back
                 }
-                temp = k->getIngredients();
-                for (auto l : temp) {
+                temp = k->getIngredients(); //repeat
+                for (auto l = temp.begin(); l != temp.end(); ++l) {
                     bool check = true;
-                    for (auto m : ingredients) {
-                        if (m.first == l.first) {
+                    for (auto m = ingredients.begin(); m != ingredients.end(); ++m) {
+                        if (m->first == l->first) { // if find same ingredient -> just count number
                             check = false;
-                            m.second += l.second;
+                            m->second += l->second;
                         }
                     }
                     if (check)
-                        ingredients.push_back(l);
+                        ingredients.push_back(make_pair(l->first, l->second)); // if find new ingredient -> push_back
                 }
-                
+    
+                // 1-3) : Compare 1-1) with 1-2), and check possible
+                // There are two cause of failure
+                // 1. We don't have ingredient
+                // 2. We have, but insuffcient
                 bool check_can_make = true;
                 for (auto l : ingredients) {
                     map<string, map<int, int>>::iterator iter = usable_meal.find(l.first);
                     if (iter == usable_meal.end()) {
                         check_can_make = false;
-                        break;
+                        break; // 1. We don't have ingredient
                     }
-
+                    // as checking, change the number to after cooking
                     for (map<int, int>::iterator m = iter->second.begin(); m != iter->second.end(); ++m) {
                         if (l.second > m->second) {
                             l.second -= m->second;
@@ -174,10 +180,10 @@ void SmartRefrigerator::recommendMealCourses() {
                     }
                     if (l.second != 0) {
                         check_can_make = false;
-                        break;
+                        break; // 2. We have, but insuffcient
                     }
                 }
-
+                // if possible combination, store in courses
                 if (check_can_make) {
                     newMeal.push_back(i->getName());
                     newMeal.push_back(j->getName());
@@ -200,6 +206,7 @@ void SmartRefrigerator::recommendMealCourses() {
         }
     }
 
+    // 2) sum of score
     double Satisfaction_MAX = 0;
     double Expiration_MAX = 0;
     
@@ -210,26 +217,27 @@ void SmartRefrigerator::recommendMealCourses() {
             Expiration_MAX = i.second.second;
     }
 
+    // 3) normalize and find greatest
     for (auto j=0; j<3; j++) {
         double MAX_score = 0;
-        vector<Course>::iterator temp_iter = courses.end();
+        vector<Course>::iterator temp_iter = courses.end(); // after for loop, pointing greatest course
         for (auto i = courses.begin(); i != courses.end(); ++i) {
             double temp1 = i->second.first / Satisfaction_MAX;
             double temp2 = i->second.second / Expiration_MAX;
-            if (MAX_score < temp1 + temp2) {
+            if (MAX_score < temp1 + temp2) { // find max score
                 MAX_score = temp1 + temp2;
                 temp_iter = i;
             }
         }
         if (temp_iter == courses.end()) {
-            break;
+            break; // prevent situation that courses have nothing
         }
         else {
-            best.push_back(make_pair(temp_iter->first, temp_iter->second));
-            courses.erase(temp_iter);
+            best.push_back(make_pair(temp_iter->first, temp_iter->second)); // store in best
+            courses.erase(temp_iter); // erase to avoid replicate
         }
     }
-
+    // display
     if (best.empty()) {
         cout << "There are no possible course meal." << endl;
     }
