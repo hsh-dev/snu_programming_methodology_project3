@@ -135,6 +135,7 @@ bool SmartController::stackFood(const string name, intPair foodSize, int exp)
         }
         else
         {
+            cout << "The foods cannot be inserted" << endl;
             return false;
         }
     }
@@ -179,6 +180,7 @@ bool SmartController::popFood(const string food_name) // void
     // TODO
     if (foodList[food_name].empty())
     {
+        cout << "There's no food that you want!" << endl;
         // if there is no food_name in foodList, return false
         return false;
     }
