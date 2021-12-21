@@ -105,6 +105,7 @@ bool NormalController::stackFood(const string name, intPair foodSize, int exp)
             cout << "Inserting " << name << " into x: " << x << ", y: " << y << endl;
         }
         else{
+            cout << "The foods cannot be inserted" << endl;
             return false;
         }
     }
@@ -147,6 +148,7 @@ bool NormalController::popFood(const string food_name)
     // Normal controller only need pop function
     // need to delete FoodPtr
     if(foodList[food_name].empty()){
+        cout << "There's no food that you want!" << endl;
         // if there is no food_name in foodList, return false
         return false;
     }
