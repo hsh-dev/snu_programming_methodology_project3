@@ -98,7 +98,7 @@ void SmartRefrigerator::recommendMealCourses() {
 
     // TODO
     // 1) make posible combination (in triple for loop)
-    // * 1-1) store usable ingredients -> usable_meal
+    // * 1-1) store usable ingredients -> usable_ingredients
     // * 1-2) ingredients need -> ingredients
     // * 1-3) compare 1-1) with 1-2), and check possible
     // 2) sum of score
@@ -114,8 +114,8 @@ void SmartRefrigerator::recommendMealCourses() {
     for (auto i = recipes.begin(); i != recipes.end(); ++i) {
         for (auto j = i + 1; j != recipes.end(); ++j) {
             for (auto k = j + 1; k != recipes.end(); ++k) {
-                // 1-1) store usable ingredients -> usable_meal
-                map<string, map<int, int>> usable_meal; // map<name, map<exp, number>>
+                // 1-1) store usable ingredients -> usable_ingredients
+                map<string, map<int, int>> usable_ingredients; // map<name, map<exp, number>>
                 Meal3 newMeal;
                 // same algorithm as display()
                 // use exp as key of map
@@ -125,7 +125,7 @@ void SmartRefrigerator::recommendMealCourses() {
                         int exp = (iter->second)[l]->getExp();
                         foodCounter[exp]++;
                     }
-                    usable_meal.insert(make_pair(iter->first, foodCounter));
+                    usable_ingredients.insert(make_pair(iter->first, foodCounter));
                 }
                 
                 // 1-2) ingredients need -> ingredients
@@ -162,8 +162,8 @@ void SmartRefrigerator::recommendMealCourses() {
                 // 2. We have, but insuffcient
                 bool check_can_make = true;
                 for (auto l : ingredients) {
-                    map<string, map<int, int>>::iterator iter = usable_meal.find(l.first);
-                    if (iter == usable_meal.end()) {
+                    map<string, map<int, int>>::iterator iter = usable_ingredients.find(l.first);
+                    if (iter == usable_ingredients.end()) {
                         check_can_make = false;
                         break; // 1. We don't have ingredient
                     }
@@ -194,7 +194,7 @@ void SmartRefrigerator::recommendMealCourses() {
                     Satisfaction += i->getScore();
                     Satisfaction += j->getScore();
                     Satisfaction += k->getScore();
-                    for(auto l : usable_meal) {
+                    for(auto l : usable_ingredients) {
                         for(auto m : l.second) {
                             Expiration += m.second * m.first;
                         }
